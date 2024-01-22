@@ -2,17 +2,19 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
-
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 <AuthorizeView>
     <Authorized>
         Hello, @context.User.Identity.Name!
-        <button class="nav-link btn btn-link" @onclick="BeginLogout">
+        <button class="btn btn-danger" @onclick="BeginLogout">
             Log out
         </button>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
-        <a href="authenticationAD/login">Log in</a>
+        @* <a href="authentication/login">Log in</a>
+        <a href="authenticationAD/login">Log in</a> *@
+        <button class="btn btn-danger" @onclick="googleLogin">Google</button>&nbsp;
+        <button class="btn btn-primary" @onclick="azureLogin">Azure</button>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -21,5 +23,18 @@
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
+    }
+    private async Task googleLogin()
+    {
+        await localStorage.SetItemAsync("isAuth", true);
+        Navigation.NavigateTo("authentication/login", forceLoad: true);
+      
+        
+    }
+    private async Task azureLogin()
+    {
+        await localStorage.SetItemAsync("isAuth", false);
+        Navigation.NavigateTo("authenticationAD/login", forceLoad: true);
+
     }
 }
